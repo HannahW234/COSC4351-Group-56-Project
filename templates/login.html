@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <div>
+        <form action="/confirmation" method="post">
+        <label>Name</label>
+        <input type="text" name="name" placeholder="name"><br>
+        <label>Email:</label>
+        <input type="email" name="email" placeholder="example@domain.com"><br>
+        <label>Password</label>
+        <input type="text" name="password" placeholder="password"><br>
+        <input type="submit" name="login_button" value="Login">
+        </form>
+    </div>
+    <a href="{{ url_for('registration_page' )}}">New User? Make an Account</a>
+<!--    <div>-->
+<!--        <form method="post">-->
+<!--            <a href="{{ url_for('registration_page' )}}">New User? Make an Account</a>-->
+<!--        </form>-->
+<!--    </div>-->
+</body>
+</html>
