@@ -29,7 +29,7 @@ def confirmation_page():
 def registration_page():
   return render_template("registration.html")
 
-@app.route('/reservation')
+@app.route('/reservation', methods=["POST"])
 def reservation_page():
   return render_template("reservation.html")
 
@@ -44,6 +44,14 @@ def creating_new_user_page():
   
   return render_template("userloggedin.html", user_exist=is_user_exist(user))
 
+
+@app.route('/table', methods=["POST"])
+def show_available_tables():
+  time = request.form['time']
+  date = request.form['date']
+  size = request.form['size']
+  
+  return (f"{time} + {date} + {size}")
 
 if __name__ == "__main__":
   app.run(debug=True)

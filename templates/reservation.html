@@ -6,5 +6,23 @@
 </head>
 <body>
     <h1>Reservation Page</h1>
+    <div class="">
+      <form class="" action="/table" method="post">
+          <label for="date">Select Date: </label>
+        <input type="date" name="date" value=""><br>
+          <label for="time">Select Time: </label>
+        <input type="time" name="time" value="">
+        <br>
+          <labe for="size">Table for:</labe>
+        <select class="size" name="size">
+          <option value="2">2 People</option>
+          <option value="4">4 People</option>
+          <option value="6">6 People</option>
+          <option value="8">8 People</option>
+        </select>
+        <br>
+          <input type="submit" name="check" value="Check Availability">
+        </form>
+    </div>
 </body>
 </html>
