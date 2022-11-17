@@ -1,6 +1,6 @@
 import sqlite3
 from table import Table
-
+import functools
 
 def create_table_information_database():
   connection = sqlite3.connect('tables.db')
@@ -14,7 +14,7 @@ def create_table_information_database():
   """)
   
   for size in range(2, 9, 2):
-    new_table = Table(size, 1)
+    new_table = Table(size, 2)
     add_table(new_table)
   
   connection.commit()
@@ -49,10 +49,10 @@ def fetchall():
   c = connection.cursor()
   # to print from remainingTables table
   c.execute("SELECT * FROM remainingTables")
-  print(c.fetchall())
-  
+  data = c.fetchall()
   connection.commit()
   connection.close()
+  return data
   
 def update_quantity(table_size):
   connection = sqlite3.connect('tables.db')
@@ -72,3 +72,32 @@ def update_quantity(table_size):
   connection.close()
   
   return availability
+
+
+def find_tables(table_size):
+  reverse_data = fetchall()
+  reverse_data.reverse()
+  result = []
+  remaining = table_size
+  
+  
+  while remaining > 0:
+    found = False
+    for size, quantity in reverse_data:
+      if quantity > 0 and remaining >= size:
+        found = True
+        remaining -= size
+        result.append(size)
+        break
+    if not found:
+      return "Cannot create table"
+
+  return result
+
+def find_max_capacity():
+  return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), fetchall())))
+
+
+delete_ALL()
+create_table_information_database()
+print(fetchall())
