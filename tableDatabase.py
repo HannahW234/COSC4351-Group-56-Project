@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from table import Table
 import functools
@@ -9,14 +10,21 @@ def create_table_information_database():
     c = connection.cursor()
     # creating table, dont run again becasue table has already been created
     c.execute("""CREATE TABLE IF NOT EXISTS remainingTables (
+          reservation_date TEXT,
+          reservation_time INTEGER,
           tablesize INTEGER ,
           quantity INTEGER
   )
   """)
-
-    for size in range(2, 9, 2):
-        new_table = Table(size, 2)
-        add_table(new_table)
+    days_in_advance = 2
+    base = datetime.datetime.today()
+    date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
+    for date in date_list:
+        for time in range(12, 15, 2):
+            for size in range(2, 9, 2):
+                new_table = Table(date.strftime('"%Y-%m-%d"'), time, size, 2)
+                add_table(new_table)
+        
 
     connection.commit()
     connection.close()
@@ -27,7 +35,7 @@ def add_table(table: Table):
 
     c = connection.cursor()
     # to add to table
-    c.execute("INSERT INTO remainingTables VALUES (?, ?)", table.get_info())
+    c.execute("INSERT INTO remainingTables VALUES (?, ?, ?, ?)", table.get_info())
 
     connection.commit()
     connection.close()
@@ -56,11 +64,11 @@ def fetchall():
     return data
 
 
-def update_quantity(table_size):
+def update_quantity(date_reser, time, table_size):
     connection = sqlite3.connect('tables.db')
 
     c = connection.cursor()
-    c.execute("SELECT * FROM remainingTables")
+    c.execute(f"SELECT * FROM remainingTables WHERE reservation_date=={date_reser}")
     items = c.fetchall()
     availability = False
     for item in items:
@@ -103,9 +111,20 @@ def find_max_capacity():
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), fetchall())))
 
 
-delete_ALL()
+def test_quantity(table: Table):
+    connection = sqlite3.connect('tables.db')
+    c = connection.cursor()
+    print(table.date)
+    c.execute(f"SELECT * FROM remainingTables WHERE reservation_date=={table.date}")
+    items = c.fetchall()
+    print(items)
+    connection.commit()
+    connection.close()
+
+table = Table('2022-11-17', 12, 2, 2)
 create_table_information_database()
-print(fetchall())
+test_quantity(table)
+#print(fetchall())
 # update_quantity(8)
 # print(fetchall())
 # print(fetchall())
