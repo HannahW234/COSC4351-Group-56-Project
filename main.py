@@ -10,11 +10,11 @@ create_user_information_database()
 def home():
   return render_template("index.html")
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["POST", "GET"])
 def login_page():
   return render_template('login.html')
 
-@app.route('/confirmation', methods=["POST"])
+@app.route('/confirmation', methods=["POST", "GET"])
 def confirmation_page():
   name = request.form['name']
   email = request.form['email']
@@ -29,11 +29,15 @@ def confirmation_page():
 def registration_page():
   return render_template("registration.html")
 
-@app.route('/reservation', methods=["POST"])
+@app.route('/reservation', methods=["POST", "GET"])
 def reservation_page():
   return render_template("reservation.html")
 
-@app.route('/newuser', methods=["POST"])
+@app.route('/payment', methods=["POST"])
+def payment_page():
+  return render_template("payment.html")
+
+@app.route('/newuser', methods=["POST", "GET"])
 def creating_new_user_page():
   name = request.form['name']
   email = request.form['email']
