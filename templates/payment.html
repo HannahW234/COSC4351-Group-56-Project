@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Payment and Confirm Reservation</title>
+</head>
+<body>
+    <form action="/payment" method="post">
+        <label>Credit Card Holder Name</label>
+        <input type="text" name="credit_name" placeholder="name"><br>
+        <label>Credit Card Number:</label>
+        <input type="text" name="credit_num"><br>
+        <label>Security Number:</label>
+        <input type="text" name="security_num"><br>
+        <label>Expiration Date</label>
+        <input type="date" name="expiration_date"><br>
+        <input type="submit" name="confirm" value="Confirm Order">
+    </form>
+</body>
+</html>
