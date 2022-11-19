@@ -65,69 +65,98 @@ def fetchall():
     return data
 
 
-def update_quantity(date_reser, time, table_size):
+def update_quantity(table: Table):
     connection = sqlite3.connect('tables.db')
-
     c = connection.cursor()
-    c.execute(f"SELECT * FROM remainingTables WHERE reservation_date=={date_reser}")
-    items = c.fetchall()
-    availability = False
-    for item in items:
-        if item[0] == table_size and item[1] > 0:
-            c.execute(f"UPDATE remainingTables SET quantity = {item[1] - 1} "
-                      f"WHERE tablesize = {item[0]}")
-            availability = True
-            break
 
+
+    quanitityQuery = ("SELECT * FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND "
+        "tablesize == ?")
+    c.execute(quanitityQuery, (table.date, table.time, table.size,))
+    item = c.fetchone()
+    if not item or item[3] < 1:
+        connection.commit()
+        connection.close()
+        return False
+
+    sqlquery = (f"UPDATE remainingTables SET quantity = {item[3] - 1} WHERE reservation_date == ? AND  reservation_time == ? AND "
+                "tablesize == ?")
+    c.execute(sqlquery, (table.date, table.time,table.size,))
     connection.commit()
     connection.close()
 
-    return availability
+    return True
 
 
-def find_tables(table_size):
-    if table_size % 2 != 0:
-        table_size += 1
-    # reverse_data = fetchall()
-    # reverse_data.reverse()
+def find_tables(clientTable: Table):
+    if clientTable.size % 2 != 0:
+        clientTable.size += 1
+
     result = []
-    remaining = table_size
+    remainingClient = clientTable.size
 
-    if find_max_capacity() < table_size:
+    connection = sqlite3.connect('tables.db')
+    c = connection.cursor()
+
+    quantityQuery = ("SELECT tablesize, quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ?")
+    c.execute(quantityQuery, (clientTable.date, clientTable.time,))
+    item = c.fetchall()
+
+    if find_max_capacity(item) < clientTable.size:
         return "Cannot create table"
 
-    while remaining > 0:
-        reverse_data = fetchall()
-        reverse_data.reverse()
-        for size, quantity in reverse_data:
-            if quantity > 0 and remaining >= size:
-                remaining -= size
-                result.append(size)
-                update_quantity(size)
+    while remainingClient > 0:
+        c.execute(quantityQuery, (clientTable.date, clientTable.time,))
+        availableTables = c.fetchall()
+        availableTables.reverse()
+
+        for tableSize, tableQuantity in availableTables:
+            if tableQuantity > 0 and remainingClient >= tableSize:
+                remainingClient -= tableSize
+                result.append(tableSize)
+                newTable = Table(clientTable.date, clientTable.time, tableSize, find_quantity(clientTable))
+                update_quantity(newTable)
                 break
+
     return result
 
 
-def find_max_capacity():
-    return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), fetchall())))
-
-
-def table_quantity_play(table: Table):
+def find_quantity(table:Table):
     connection = sqlite3.connect('tables.db')
     c = connection.cursor()
-    # print(table.date)
-    sqlquery = ("SELECT * FROM remainingTables WHERE reservation_date == ? AND  reservation_time == ?")
-    c.execute(sqlquery, (table.date,table.time,))
-    items = c.fetchall()
-    print(items)
+
+    quanitityQuery = ("SELECT quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND tablesize == ?")
+    c.execute(quanitityQuery, (table.date, table.time, table.size,))
+    quantity = c.fetchone()
+
     connection.commit()
     connection.close()
 
+    return quantity
+
+
+def find_max_capacity(sequence):
+    return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
+
+
+
 delete_ALL()
-table = Table('2022-11-18', 12, 2, 2)
+table = Table('2022-11-18', 12, 2, 6)
+clienttable = Table('2022-11-18', 12, 40, 0)
 create_table_information_database()
-table_quantity_play(table)
-#print(fetchall())
+
+print(fetchall())
+print(find_tables(clienttable))
+print(fetchall())
+
+# update_quantity(table)
+# print(fetchall())
+
+
+#next steps:
+#finish update qantity function
+#display table on website -- table where you can click on time 12  14   16   18   20 -- click on it, capture data from input, run function......
+
 # update_quantity(8)
 # print(fetchall())
 # print(fetchall())
