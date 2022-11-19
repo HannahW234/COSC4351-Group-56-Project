@@ -21,7 +21,7 @@ def create_table_information_database():
     date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
     for date in date_list:
         for time in range(12, 15, 2):
-            for size in range(2, 9, 2):
+            for size in range(2, 5, 2):
                 #date.strftime('%Y-%m-%d')
                 new_table = Table(date, time, size, 2)
                 add_table(new_table)
@@ -140,14 +140,14 @@ def find_max_capacity(sequence):
 
 
 
-delete_ALL()
-table = Table('2022-11-18', 12, 2, 6)
-clienttable = Table('2022-11-18', 12, 40, 0)
-create_table_information_database()
-
-print(fetchall())
-print(find_tables(clienttable))
-print(fetchall())
+# delete_ALL()
+# table = Table('2022-11-18', 12, 2, 6)
+# clienttable = Table('2022-11-18', 12, 40, 0)
+# create_table_information_database()
+#
+# print(fetchall())
+# print(find_tables(clienttable))
+# print(fetchall())
 
 # update_quantity(table)
 # print(fetchall())

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from user import User
 from userDatabase import *
+import tableDatabase as t
 
 
 app = Flask(__name__)
@@ -54,8 +55,23 @@ def show_available_tables():
   time = request.form['time']
   date = request.form['date']
   size = request.form['size']
-  
-  return (f"{time} + {date} + {size}")
+
+  t.delete_ALL()
+  t.create_table_information_database()
+  print(t.fetchall())
+
+  # print(type(date))
+  # print(type(time[0:2]))
+  # print(type(size))
+  table = t.Table(date, int(time[0:2]), int(size), None)
+  result = t.find_tables(table)
+
+  print(result)
+
+  print(t.fetchall())
+
+
+  return (f"{time[0:2]}")
 
 if __name__ == "__main__":
   app.run(debug=True)
