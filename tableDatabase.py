@@ -10,7 +10,7 @@ def create_table_information_database():
     c = connection.cursor()
     # creating table, dont run again becasue table has already been created
     c.execute("""CREATE TABLE IF NOT EXISTS remainingTables (
-          reservation_date TEXT,
+          reservation_date DATE,
           reservation_time INTEGER,
           tablesize INTEGER ,
           quantity INTEGER
@@ -22,7 +22,8 @@ def create_table_information_database():
     for date in date_list:
         for time in range(12, 15, 2):
             for size in range(2, 9, 2):
-                new_table = Table(date.strftime('"%Y-%m-%d"'), time, size, 2)
+                #date.strftime('%Y-%m-%d')
+                new_table = Table(date, time, size, 2)
                 add_table(new_table)
         
 
@@ -111,19 +112,21 @@ def find_max_capacity():
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), fetchall())))
 
 
-def test_quantity(table: Table):
+def table_quantity_play(table: Table):
     connection = sqlite3.connect('tables.db')
     c = connection.cursor()
-    print(table.date)
-    c.execute(f"SELECT * FROM remainingTables WHERE reservation_date=={table.date}")
+    # print(table.date)
+    sqlquery = ("SELECT * FROM remainingTables WHERE reservation_date == ? AND  reservation_time == ?")
+    c.execute(sqlquery, (table.date,table.time,))
     items = c.fetchall()
     print(items)
     connection.commit()
     connection.close()
 
-table = Table('2022-11-17', 12, 2, 2)
+delete_ALL()
+table = Table('2022-11-18', 12, 2, 2)
 create_table_information_database()
-test_quantity(table)
+table_quantity_play(table)
 #print(fetchall())
 # update_quantity(8)
 # print(fetchall())
