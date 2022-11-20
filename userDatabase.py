@@ -102,6 +102,7 @@ def is_user_exist(user: User) -> bool:
   
   return found
 
+
 # user = User('hiris', 'example@domain.com', '123456')
 # add_user(user)
 #fetchall()
