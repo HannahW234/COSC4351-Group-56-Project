@@ -16,10 +16,13 @@
 <body>
     <nav>
         <a href="/">Home</a>
-        <a href="/login">Login</a>
-        <a href="/registration">Sign Up</a>
         <a href="/reservation">Reserve</a>
+        {% if session['logged_in'] %}
         <a href="/profile"> Profile</a>
+        <a href = "/logout"> Logout</a>
+        {% else %}
+        <a href="/login">Login/Sign Up</a>
+        {% endif %}
     </nav>
     <hr>
     <div class="content">
