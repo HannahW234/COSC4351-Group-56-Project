@@ -10,6 +10,7 @@ create_user_information_database()
 
 @app.route("/")
 def home():
+  t.create_table_information_database()
   return render_template("index.html")
 
 @app.route('/login', methods=["POST", "GET"])
@@ -60,19 +61,18 @@ def show_available_tables():
   if not is_valid_date(date) and not is_valid_time(time):
     return render_template("reservation.html")
 
-  t.delete_ALL()
-  t.create_table_information_database()
-  print(t.fetchall())
-  hours, minutes = map(int, "00:00".split(':'))
 
-  table = t.Table(date, hours, int(size), None)
-  result = t.find_tables(table)
+  hours, minutes = map(int, time.split(':'))
 
-  print(result)
+  client_table = t.Table(date, int(hours), int(size), None)
+  t.fetchall()
+  result = t.find_tables(client_table)
 
-  print(t.fetchall())
-  hours, minutes = map(int, "00:00".split(':'))
-  return time
+  valid_table = is_table_reserved(result)
+  user_test = User("random", "example@email.com","123456")
+  display_info = display(user_test, client_table, t.find_tables)
+  
+  return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)
 
 if __name__ == "__main__":
   app.run(debug=True)
