@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from user import User
 from userDatabase import *
 import tableDatabase as t
+from datatype_check import *
 
 
 app = Flask(__name__)
@@ -56,22 +57,22 @@ def show_available_tables():
   date = request.form['date']
   size = request.form['size']
 
+  if not is_valid_date(date) and not is_valid_time(time):
+    return render_template("reservation.html")
+
   t.delete_ALL()
   t.create_table_information_database()
   print(t.fetchall())
+  hours, minutes = map(int, "00:00".split(':'))
 
-  # print(type(date))
-  # print(type(time[0:2]))
-  # print(type(size))
-  table = t.Table(date, int(time[0:2]), int(size), None)
+  table = t.Table(date, hours, int(size), None)
   result = t.find_tables(table)
 
   print(result)
 
   print(t.fetchall())
-
-
-  return (f"{time[0:2]}")
+  hours, minutes = map(int, "00:00".split(':'))
+  return time
 
 if __name__ == "__main__":
   app.run(debug=True)

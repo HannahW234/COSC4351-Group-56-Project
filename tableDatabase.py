@@ -140,9 +140,9 @@ def find_max_capacity(sequence):
 
 
 
-# delete_ALL()
-# table = Table('2022-11-18', 12, 2, 6)
-# clienttable = Table('2022-11-18', 12, 40, 0)
+#delete_ALL()
+# table = Table('2022-11-19', 12, 2, 6)
+# clienttable = Table('2022-11-19', 12, 6, 0)
 # create_table_information_database()
 #
 # print(fetchall())
