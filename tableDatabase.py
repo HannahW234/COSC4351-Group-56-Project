@@ -103,7 +103,7 @@ def find_tables(clientTable: Table):
     item = c.fetchall()
 
     if find_max_capacity(item) < clientTable.size:
-        return "Cannot create table"
+        return []
 
     while remainingClient > 0:
         c.execute(quantityQuery, (clientTable.date, clientTable.time,))
