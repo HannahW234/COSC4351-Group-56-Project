@@ -66,9 +66,9 @@ def show_available_tables():
 
   client_table = t.Table(date, int(hours), int(size), None)
   t.fetchall()
-  result = t.find_tables(client_table)
+  result = t.find_tables(client_table) #either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
-  valid_table = is_table_reserved(result)
+  valid_table = is_table_reserved(result) #will check if it is empty or not, meaning table reserved or not
   user_test = User("random", "example@email.com","123456")
   display_info = display(user_test, client_table, t.find_tables)
   

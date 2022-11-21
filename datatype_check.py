@@ -23,7 +23,8 @@ def is_valid_time(time):
 
 
 def is_table_reserved(data):
-    return type(data) == list
+    #return type(data) == list
+    return not data == []
 
 
 def display(user: User, table: Table, find_table_func) -> list:
@@ -45,3 +46,5 @@ def display(user: User, table: Table, find_table_func) -> list:
         display_str.append("Could Not Reserve Table")
         
     return display_str
+
+print(is_table_reserved([]))

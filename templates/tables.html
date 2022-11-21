@@ -7,7 +7,7 @@
 <body>
     <div>
     {% if not valid_table: %}
-        <h1> {{  tables_reserved }} </h1>
+        <h1> Tables could not be reserved </h1>   <!-- <h1> {'{  tables_reserved }} </h1> -->
     {% else: %}
         <h1> Tables reserved successful. Here are the details:</h1>
         {% for info in display_info: %}
