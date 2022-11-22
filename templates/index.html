@@ -4,10 +4,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_page.css') }}">
     <title>Welcome</title>
 </head>
-<body>
-    <h1>Welcome</h1>
+<div class="container">
+<body class="form">
+    <h1>Welcome!</h1>
     <form action="/login" method="post">
         <button>Login</button>
     </form>
@@ -15,5 +17,7 @@
         <button>Guest Reservation</button>
     </form>
 </body>
+</div>
+<div class="table_image" ></div>
 </html>
 {% endblock %}

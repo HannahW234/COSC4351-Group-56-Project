@@ -1,0 +1,28 @@
+.container {
+    font: 30px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: rgb(143, 150, 159);
+    margin: 0px;
+    position: absolute;
+    padding: 20px 20px;
+    top: 50px; 
+    right: 47%; 
+    width: 50%; 
+    height:460px;
+}
+  
+  a {
+    color: #00B7FF;
+  }
+
+
+.table_image {
+    position: absolute;
+    top: 50px;
+    left: 50%; 
+    width: 50%; 
+    height: 500px;
+    background-image: url("outdoor_patio.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-position: 0 0;
+}

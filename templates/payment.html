@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <title>Enter Payment and Confirm Reservation</title>
 </head>
 <body>
-    <form action="/payment" method="post">
+    <form action="/enter_payment" method="post">
         <label>Credit Card Holder Name</label>
         <input type="text" name="credit_name" placeholder="name"><br>
         <label>Credit Card Number:</label>

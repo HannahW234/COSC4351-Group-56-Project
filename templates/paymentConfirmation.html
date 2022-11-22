@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div>
+        {% if valid_credit: %}
+            <h2>This was not a valid credit card. Please try again</h2>
+        {% else: %}
+            <h2>Success! Thank you for reserving a table </h2>
+            <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('home')}}" />
+        {% endif %}
+    </div>
+</body>
+</html>
