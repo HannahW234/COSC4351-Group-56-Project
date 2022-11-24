@@ -40,13 +40,10 @@ class CreditCard:
     pattern1 = r"(\d{4})(-?)(\d{4})(\2\d{4}){2}"
     pattern2 = r"((\d)(?!\2{3})){16}"
     pattern3 = r'(?:\d{4}[ \-]?){3}\d{4}'
-    # if re.match(pattern1, self.cardNum):
-    #   self.cardNum = self.cardNum.replace("-", "")
-    #   if re.match(pattern2, self.cardNum):
-    #     return True
-    print(re.match(pattern3, self.cardNum))
-    return False
+    return re.match(pattern3, self.cardNum) != None
   
   
-credit = CreditCard("Hin Pham", "1111222233334444", '2022-12-01', 755)
+credit = CreditCard("Hin Pham", "1111051051051010", '2022-12-01', 755)
 print(credit.is_card_valid())
+
+print(credit.is_card_num_valid())
