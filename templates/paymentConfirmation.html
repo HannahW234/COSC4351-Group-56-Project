@@ -6,7 +6,7 @@
             <h2>This was not a valid credit card. Please try again</h2>
         {% else: %}
             <h2>Success! Thank you for reserving a table </h2>
-            <meta http-equiv = "refresh" content = "1.5; url = {{ url_for('home')}}" />
+            <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('processing_data', date=client_date, time=client_time, size=client_size)}}" />
             <!--TODO: FIX URL TO SUMMARY PAGE -->
         {% endif %}
     </div>

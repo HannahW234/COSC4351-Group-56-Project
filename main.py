@@ -1,3 +1,4 @@
+import flask
 from flask import Flask, render_template, session, request
 
 from dateService import is_weekend, is_holiday
@@ -12,9 +13,11 @@ from creditCardServices import *
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 create_user_information_database()
+#session['logged_in'] = False
 
 @app.route("/")
 def home():
+  session['logged_in'] = False
   t.create_table_information_database()
   return render_template("index.html")
 
@@ -52,14 +55,19 @@ def enter_payment():
   credit_num = request.form['credit_num']
   security = request.form['security_num']
   exp_date = request.form['expiration_date']
+
+  time = request.form['client_time']
+  size = request.form['client_size']
+  date = request.form['client_date']
+
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
-  
+
   if session['logged_in']: 
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
     add_credit_card(credit_info)
 
-  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid())
+  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size)
 
 @app.route('/payment', methods=["POST","GET"])
 def payment_page():
@@ -94,20 +102,31 @@ def show_available_tables():
   if not is_valid_date(date) and not is_valid_time(time):
     return render_template("reservation.html")
 
-  if is_weekend(date) or is_holiday(date): #TODO: Redirect to payment page IF USER not logged in AND ON HOLIDAY/WEEKEND
-    return render_template("payment.html")
-  
+  if is_weekend(date) or is_holiday(date) and not session['logged_in']:
+    newTable = Table(date, time, size, 0)
+    return render_template("payment.html", client_table=newTable)
+
+  return processing_data(date, time, size)
+
+@app.route('/processing_data/<date>/<time>/<size>', methods=["POST", "GET"])
+def processing_data(date, time, size):
+
   hours, minutes = map(int, time.split(':'))
 
   client_table = t.Table(date, int(hours), int(size), None)
   t.fetchall()
-  result = t.find_tables(client_table) #either will be empty list [] or list with tables that were reserved ie. [4,2,2]
+  result = t.find_tables(
+    client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
-  valid_table = is_table_reserved(result) #will check if it is empty or not, meaning table reserved or not
-  user_test = User("random", "example@email.com","123456")
+  valid_table = is_table_reserved(result)  # will check if it is empty or not, meaning table reserved or not
+  user_test = User("random", "example@email.com", "123456")
   display_info = display(user_test, client_table, result)
-  
+
+
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)
+
+
+
 
 if __name__ == "__main__":
   app.run(debug=True)

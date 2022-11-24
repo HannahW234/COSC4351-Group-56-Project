@@ -8,13 +8,16 @@
 <body>
     <form action="/enter_payment" method="post">
         <label>Credit Card Holder Name</label>
-        <input type="text" name="credit_name" placeholder="name"><br>
+        <input type="text" name="credit_name" placeholder="name" value="haris tud"><br>
         <label>Credit Card Number:</label>
-        <input type="text" name="credit_num"><br>
+        <input type="text" name="credit_num" value="4569215487956321"><br>
         <label>Security Number:</label>
-        <input type="text" name="security_num"><br>
+        <input type="text" name="security_num" value="317"><br>
         <label>Expiration Date</label>
         <input type="month" name="expiration_date"><br>
+        <input type="hidden" name="client_date" value={{ client_table.date }}>
+        <input type="hidden" name="client_size" value={{ client_table.size }}>
+        <input type="hidden" name="client_time" value={{ client_table.time }}>
         <input type="submit" name="confirm" value="Confirm Order">
     </form>
 </body>
