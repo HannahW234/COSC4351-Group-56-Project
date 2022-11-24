@@ -1,4 +1,6 @@
 from flask import Flask, render_template, session, request
+
+from dateService import is_weekend, is_holiday
 from user import User
 from userDatabase import *
 from creditDatabase import * 
@@ -92,7 +94,9 @@ def show_available_tables():
   if not is_valid_date(date) and not is_valid_time(time):
     return render_template("reservation.html")
 
-
+  if is_weekend(date) or is_holiday(date): #TODO: Redirect to payment page IF USER not logged in AND ON HOLIDAY/WEEKEND
+    return render_template("payment.html")
+  
   hours, minutes = map(int, time.split(':'))
 
   client_table = t.Table(date, int(hours), int(size), None)
@@ -101,7 +105,7 @@ def show_available_tables():
 
   valid_table = is_table_reserved(result) #will check if it is empty or not, meaning table reserved or not
   user_test = User("random", "example@email.com","123456")
-  display_info = display(user_test, client_table, t.find_tables)
+  display_info = display(user_test, client_table, result)
   
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)
 

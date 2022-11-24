@@ -27,16 +27,16 @@ def is_table_reserved(data):
     return not data == []
 
 
-def display(user: User, table: Table, find_table_func) -> list:
+def display(user: User, table: Table, tables_result) -> list:
     user_info = user.get_info()
     table_info = table.get_info()
     
-    reserving_tables = find_table_func(table)
+    reserving_tables = tables_result
     display_str = []
 
     if reserving_tables:
         display_str.append(f"Name of reservation: {user.name}")
-        display_str.append(f"Time of reservation: {table.time}")
+        display_str.append(f"Time of reservation: {datetime.datetime.strptime(str(table.time) + ':00','%H:%M').strftime('%I:%M %p')}")
         display_str.append(f"Date of reservation: {table.date}")
         display_str.append(f"Table for {table.size} is including: ")
 
@@ -46,5 +46,3 @@ def display(user: User, table: Table, find_table_func) -> list:
         display_str.append("Could Not Reserve Table")
         
     return display_str
-
-print(is_table_reserved([]))

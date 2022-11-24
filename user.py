@@ -4,7 +4,8 @@ class User:
     self.name = name
     self.email = email
     self.password = password
-    self.reward_points = 0 
+    self.reward_points = 0
+    self.credit_cards = []
 
   def add_points(self, points):
     self.points = self.points+points
@@ -17,3 +18,6 @@ class User:
 
   def get_info(self):
     return [self.id, self.name, self.email, self.password]
+  
+  def add_credit_card(self, credit_card):
+    self.credit_cards.append(credit_card)

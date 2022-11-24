@@ -28,6 +28,5 @@ def add_credit_card(credit_info):
     connection.close() 
 
 
-
 create_credit_information_database()
 

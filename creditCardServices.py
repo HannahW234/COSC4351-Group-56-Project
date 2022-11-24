@@ -19,8 +19,8 @@ class CreditCard:
       return False
 
     try: #checking expiration date is after today
-      self.expDate = datetime.strptime(self.expDate, '%Y-%m-%d').date()
-      if self.expDate < datetime.now().date():
+      self.expDate = datetime.strptime(self.expDate, '%Y-%m').date()
+      if self.expDate <= datetime.now().date():
         return False
     except:
       return False
@@ -41,6 +41,4 @@ class CreditCard:
     pattern3 = r'(?:\d{4}[ \-]?){3}\d{4}'
     return re.match(pattern3, self.cardNum) != None
   
-  
-credit = CreditCard("Hin Pham", "1111051051051010", '2022-12-01', 755)
-print(credit.is_card_valid())
+

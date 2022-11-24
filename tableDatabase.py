@@ -4,6 +4,20 @@ from table import Table
 import functools
 
 
+def isDateAlreadyInDatabase(date):
+    connection = sqlite3.connect('tables.db')
+    c = connection.cursor()
+    
+    quanitityQuery = ("SELECT * FROM remainingTables WHERE reservation_date == ?")
+    c.execute(quanitityQuery, (date,))
+    item = c.fetchall()
+    
+    connection.commit()
+    connection.close()
+
+    return len(item) > 0
+
+
 def create_table_information_database():
     connection = sqlite3.connect('tables.db')
 
@@ -20,6 +34,9 @@ def create_table_information_database():
     base = datetime.datetime.today()
     date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
     for date in date_list:
+        # if the day already exist in database, then dont create new tables on that day
+        if isDateAlreadyInDatabase(date):
+            continue
         for time in range(12, 15, 2):
             for size in range(2, 5, 2):
                 #date.strftime('%Y-%m-%d')
@@ -89,11 +106,12 @@ def update_quantity(table: Table):
 
 
 def find_tables(clientTable: Table):
+    client_size = clientTable.size
     if clientTable.size % 2 != 0:
-        clientTable.size += 1
+        client_size += 1
 
     result = []
-    remainingClient = clientTable.size
+    remainingClient = client_size
 
     connection = sqlite3.connect('tables.db')
     c = connection.cursor()
@@ -102,7 +120,9 @@ def find_tables(clientTable: Table):
     c.execute(quantityQuery, (clientTable.date, clientTable.time,))
     item = c.fetchall()
 
-    if find_max_capacity(item) < clientTable.size:
+    if find_max_capacity(item) < client_size:
+        connection.commit()
+        connection.close()
         return []
 
     while remainingClient > 0:
@@ -118,13 +138,17 @@ def find_tables(clientTable: Table):
                 update_quantity(newTable)
                 break
 
+    connection.commit()
+    connection.close()
     return result
 
 
 def find_quantity(table:Table):
     connection = sqlite3.connect('tables.db')
     c = connection.cursor()
-
+    size = table.size
+    if size % 2 == 1:
+        size += 1
     quanitityQuery = ("SELECT quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND tablesize == ?")
     c.execute(quanitityQuery, (table.date, table.time, table.size,))
     quantity = c.fetchone()
@@ -138,27 +162,3 @@ def find_quantity(table:Table):
 def find_max_capacity(sequence):
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
 
-
-
-#delete_ALL()
-# table = Table('2022-11-19', 12, 2, 6)
-# clienttable = Table('2022-11-19', 12, 6, 0)
-# create_table_information_database()
-#
-# print(fetchall())
-# print(find_tables(clienttable))
-# print(fetchall())
-
-# update_quantity(table)
-# print(fetchall())
-
-
-#next steps:
-#finish update qantity function
-#display table on website -- table where you can click on time 12  14   16   18   20 -- click on it, capture data from input, run function......
-
-# update_quantity(8)
-# print(fetchall())
-# print(fetchall())
-# print(find_tables(15))
-# print(fetchall())
