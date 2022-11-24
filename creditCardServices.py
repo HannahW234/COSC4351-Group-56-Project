@@ -14,17 +14,16 @@ class CreditCard:
     
     if first_last_name_regex.match(self.cardName) == None:
       return False
-    
+
+    if not self.is_card_num_valid():
+      return False
+
     try: #checking expiration date is after today
       self.expDate = datetime.strptime(self.expDate, '%Y-%m-%d').date()
       if self.expDate < datetime.now().date():
         return False
     except:
       return False
-  
-    # cvv_regex = r'/^[0-9]{3,4}$/'
-    # print(self.CVV)
-    # print(re.search(cvv_regex, self.CVV))
     
     try: #CVV format and number
       self.CVV = int(self.CVV)
@@ -45,5 +44,3 @@ class CreditCard:
   
 credit = CreditCard("Hin Pham", "1111051051051010", '2022-12-01', 755)
 print(credit.is_card_valid())
-
-print(credit.is_card_num_valid())
