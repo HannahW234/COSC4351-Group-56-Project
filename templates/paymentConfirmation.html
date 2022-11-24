@@ -2,7 +2,7 @@
 <html lang="en">
 <body>
     <div>
-        {% if valid_credit: %}
+        {% if not valid_credit: %}
             <h2>This was not a valid credit card. Please try again</h2>
         {% else: %}
             <h2>Success! Thank you for reserving a table </h2>

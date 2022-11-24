@@ -4,6 +4,7 @@ from userDatabase import *
 from creditDatabase import * 
 import tableDatabase as t
 from datatype_check import *
+from creditCardServices import *
 
 
 app = Flask(__name__)
@@ -49,13 +50,14 @@ def enter_payment():
   credit_num = request.form['credit_num']
   security = request.form['security_num']
   exp_date = request.form['expiration_date']
+  user_credit_card = CreditCard(name, credit_num, exp_date, security)
   
   if session['logged_in']: 
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
     add_credit_card(credit_info)
 
-  return render_template("paymentConfirmation.html")
+  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid())
 
 @app.route('/payment', methods=["POST","GET"])
 def payment_page():
