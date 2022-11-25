@@ -66,6 +66,7 @@ def enter_payment():
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
     add_credit_card(credit_info)
+    session['points'] = 1
 
   return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size)
 
@@ -78,8 +79,16 @@ def creating_new_user_page():
   name = request.form['name']
   email = request.form['email']
   password = request.form['password']
-  
+
+  mail_address = [request.form['m_city'], request.form['m_state'], request.form['m_zipcode'], request.form['m_street']]
+  if not request.form['sameAsMailing']: 
+    bill_address = [ request.form['b_city'], request.form['b_state'], request.form['b_zipcode'], request.form['b_street']]
+  else: 
+    bill_address = mail_address
+
   user = User(name, email, password)
+  user.set_mail_address(mail_address)
+  user.set_bill_address(bill_address)
   currentUserID = add_user(user)
   user.set_id(currentUserID)
   session['user'] = user.__dict__

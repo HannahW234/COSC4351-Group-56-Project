@@ -27,6 +27,18 @@ def add_credit_card(credit_info):
     connection.commit()
     connection.close() 
 
+def get_user_credit_data(userID):
+  connection = sqlite3.connect('credit.db')
+  c = connection.cursor()
+  print(userID)
+  c.execute("SELECT * FROM credit WHERE customer_id = '%s'" % userID)
+  items = c.fetchall()
+  items = [i[1:] for i in items]
+
+  connection.commit()
+  connection.close() 
+
+  return items
 
 create_credit_information_database()
 
