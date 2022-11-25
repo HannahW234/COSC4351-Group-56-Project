@@ -6,7 +6,10 @@
             <h2>This was not a valid credit card. Please try again</h2>
         {% else: %}
             <h2>Success! Thank you for reserving a table </h2>
-            <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('home')}}" />
+            {% if session['logged_in'] %}
+                <h2> You earned {{session['points']}} points! </h2>
+            {% endif %}
+            <meta http-equiv = "refresh" content = "4.0; url = {{ url_for('home')}}" />
         {% endif %}
     </div>
 </body>

@@ -11,12 +11,25 @@ def create_user_information_database():
           customer_id int, 
           name text,
           email text,
-          password text 
+          password text, 
+          mail_city text, 
+          mail_state text, 
+          mail_zip text, 
+          mail_address text, 
+          bill_city text, 
+          bill_state text, 
+          bill_zip text, 
+          bill_address text, 
+          points int, 
+          payment_method text, 
+          preferred_diner int
   )
   """)
 
   connection.commit()
   connection.close()
+
+create_user_information_database()
 
 def get_new_id(): #Genereates a unique ID for the new customer
   connection = sqlite3.connect('customer.db')
@@ -43,7 +56,8 @@ def add_user(user: User):
   if not is_user_exist(user):
     id = get_new_id()
     user.set_id(id)
-    c.execute("INSERT INTO customers VALUES (?, ?, ?, ?)", user.get_info())
+    print(user.get_all_info())
+    c.execute("INSERT INTO customers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user.get_all_info())
   
   connection.commit()
   connection.close()
@@ -79,16 +93,32 @@ def get_id(user:User):
   c.execute("SELECT customer_id, name, password FROM customers")
   user_info = user.get_info()
   items = c.fetchall()
+  connection.commit()
+  connection.close()
   for item in items: 
-    if user_info[1] == item[1] and user_info[3] == item[2]: 
+    if user_info[1] == item[1] and user_info[2] == item[2]: #comparing name and password 
       return item[0]
 
+def get_address(id, type): 
+  connection = sqlite3.connect('customer.db')
+  
+  c = connection.cursor()
+  if type == "mail": 
+    c.execute("SELECT customer_id, mail_zip, mail_city, mail_state, mail_address FROM customers WHERE customer_id = '%s'" % id)
+  elif type == "bill":
+    c.execute("SELECT customer_id, bill_zip, bill_city, bill_state, bill_address FROM customers WHERE customer_id = '%s'" % id)
+
+  items = c.fetchall()
+  items = items[0]
+  connection.commit()
+  connection.close()
+  return items[1] + " " + items[2] + " " + items[3] + " " + items[4]
 #
 def is_user_exist(user: User) -> bool:
   connection = sqlite3.connect('customer.db')
   
   c = connection.cursor()
-  c.execute("SELECT * FROM customers")
+  c.execute("SELECT customer_id, name, password FROM customers")
   items = c.fetchall()
   
   found = False

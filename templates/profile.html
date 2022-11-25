@@ -5,9 +5,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     <title>Profile</title>
 </head>
+<div class="user_info">
+    <h1>{{data[0]}}</h1>
+    <p> 
+        email: {{data[1]}} <br>
+        mailing address: {{data[3]}}<br>
+        billing address: {{data[4]}} <br>
+        favorite diner: 
+    </p>
+</div>
+<div class="reservations">
+    <h1> My Reservations </h1>
+</div>
+<div class="rewards">
+    <h1> My Rewards </h1>
+</div>
+<div class="credit_info">
+    <h1> My Payment Information </h1>
+    {% for item in data[2] %}
+        Card Holder Name: {{item[0]}}   
+        <br>
+        Credit Card #: {{item[1]}}  
+        <br> 
+        Security #: {{item[2]}}   
+        <br>
+        Expiration Date: {{item[3]}}   
+        <br>
+        <br>
+        <br>
+    {% endfor %}
+</div>
+
+
+
 <body>
 
 {% endblock %}

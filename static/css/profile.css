@@ -1,0 +1,22 @@
+.reservations{
+    position: absolute;
+    left: 45%; 
+    top: 7%;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.rewards{
+    position: absolute; 
+    left: 45%;
+    top: 50%; 
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.user_info{
+    top: 7%; 
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.credit_info{
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
