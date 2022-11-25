@@ -102,6 +102,21 @@ def logout():
   session['logged_in'] = False
   return render_template("index.html")
 
+@app.route('/profile', methods=["POST", "GET"])
+def profile_page(): 
+  currentID = session['user']['id']
+  credit_info = get_user_credit_data(currentID)
+  #points = get_points(currentID)
+  #favorite_diner = get_diner(currentID) ###NEED TO IMPLEMENT DINER SYSTEM
+  #current_reservations = get_user_reservations(currentID) ##IMPLEMENT USER RESERVATIONS 
+  name = session['user']['name']
+  email = session['user']['email']
+  mail_address = get_address(currentID, "mail")
+  bill_address = get_address(currentID, "bill")
+  profile_data = [name, email, credit_info, mail_address, bill_address]
+
+  return render_template("profile.html", data=profile_data)
+
 @app.route('/table', methods=["POST"])
 def show_available_tables():
   time = request.form['time']
