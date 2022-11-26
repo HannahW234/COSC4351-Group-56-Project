@@ -10,7 +10,6 @@
                 <h2> You earned {{session['points']}} points! </h2>
             {% endif %}
             <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('processing_data', date=client_date, time=client_time, size=client_size)}}" />
-            <!--TODO: FIX URL TO SUMMARY PAGE -->
         {% endif %}
     </div>
 </body>

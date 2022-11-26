@@ -4,7 +4,8 @@ class User:
     self.name = name
     self.email = email
     self.password = password
-    
+    self.credit_cards = []
+
     self.reward_points = 0 
     self.bill_address = []
     self.mail_address = []
@@ -18,7 +19,7 @@ class User:
     self.bill_address = b
 
   def add_points(self, points):
-    self.points = self.points+points
+    self.reward_points += self.reward_points
   
   def set_id(self, id): 
     self.id = id 

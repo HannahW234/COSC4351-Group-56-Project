@@ -25,6 +25,9 @@
 <!--            <a href="{{ url_for('registration_page' )}}">New User? Make an Account</a>-->
 <!--        </form>-->
 <!--    </div>-->
+    <div>
+        {% block guest %} {% endblock %}
+    </div>
 </body>
 </html>
 {% endblock %}

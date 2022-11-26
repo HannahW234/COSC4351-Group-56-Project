@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, redirect, url_for
 
 from dateService import is_weekend, is_holiday
 from user import User
@@ -18,6 +18,8 @@ create_user_information_database()
 @app.route("/")
 def home():
   session['logged_in'] = False
+  session['user'] = None
+  session['card_on_file'] = False
   t.create_table_information_database()
   return render_template("index.html")
 
@@ -59,9 +61,10 @@ def enter_payment():
   time = request.form['client_time']
   size = request.form['client_size']
   date = request.form['client_date']
-
+  print("IM IN ENTER PAYment")
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
-
+  session['card_on_file'] = True
+  print(f'ENTER PAYMENT {session["card_on_file"]}')
   if session['logged_in']: 
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
@@ -117,23 +120,45 @@ def profile_page():
 
   return render_template("profile.html", data=profile_data)
 
+@app.route('/unregistered_user_input_info', methods=["POST"])
+def unregistered_user_input_info():
+  password = ''
+  name = request.form['name']
+  phone = request.form['phone_number']
+  email = request.form['email']
+  user = User(name, email, password)
+
+  session['user'] = user.__dict__
+
+  return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size']))
+
 @app.route('/table', methods=["POST"])
 def show_available_tables():
   time = request.form['time']
   date = request.form['date']
   size = request.form['size']
+  session['time'] = time
+  session['date'] = date
+  session['size'] = size
+
 
   if not is_valid_date(date) and not is_valid_time(time):
     return render_template("reservation.html")
 
-  if is_weekend(date) or is_holiday(date) and not session['logged_in']:
-    newTable = Table(date, time, size, 0)
-    return render_template("payment.html", client_table=newTable)
+  if not session['logged_in']: #Unregistered guest
+    return render_template("login_unregistered.html")
+
 
   return processing_data(date, time, size)
 
 @app.route('/processing_data/<date>/<time>/<size>', methods=["POST", "GET"])
 def processing_data(date, time, size):
+
+  if (is_weekend(date) or is_holiday(date) and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
+    print(session['card_on_file'])
+    print("Loop Here")
+    newTable = Table(date, time, size, 0)
+    return render_template("payment.html", client_table=newTable)
 
   hours, minutes = map(int, time.split(':'))
 
