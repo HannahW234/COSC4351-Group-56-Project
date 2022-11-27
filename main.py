@@ -19,9 +19,11 @@ create_user_information_database()
 def home():
   session['logged_in'] = False
   session['user'] = None
-  session['card_on_file'] = False
+  
   t.create_table_information_database()
+  
   return render_template("index.html")
+
 
 @app.route('/login', methods=["POST", "GET"])
 def login_page():
@@ -29,13 +31,19 @@ def login_page():
 
 @app.route('/confirmation', methods=["POST", "GET"])
 def confirmation_page():
+  
   name = request.form['name']
   email = request.form['email']
   password = request.form['password']
+  
   user = User(name, email, password)
   currentUserID = get_id(user)
   user.set_id(currentUserID)
+  
   session['user'] = user.__dict__ ##allows for user to be used in other requests
+  card_on_file = True if len(session['user']['credit_cards']) > 0 else False
+  session['card_on_file'] = card_on_file
+  
   if is_user_exist(user): 
     session['logged_in'] = True
   
@@ -61,10 +69,11 @@ def enter_payment():
   time = request.form['client_time']
   size = request.form['client_size']
   date = request.form['client_date']
-  print("IM IN ENTER PAYment")
+  
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
+  session['user']['credit_cards'].append(user_credit_card.__dict__)
   session['card_on_file'] = True
-  print(f'ENTER PAYMENT {session["card_on_file"]}')
+  
   if session['logged_in']: 
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
@@ -82,8 +91,9 @@ def creating_new_user_page():
   name = request.form['name']
   email = request.form['email']
   password = request.form['password']
-
+  phone_number = request.form['phone_number']
   mail_address = [request.form['m_city'], request.form['m_state'], request.form['m_zipcode'], request.form['m_street']]
+  
   if not request.form['sameAsMailing']: 
     bill_address = [ request.form['b_city'], request.form['b_state'], request.form['b_zipcode'], request.form['b_street']]
   else: 
@@ -92,12 +102,13 @@ def creating_new_user_page():
   user = User(name, email, password)
   user.set_mail_address(mail_address)
   user.set_bill_address(bill_address)
+  user.set_phone_number(phone_number)
   currentUserID = add_user(user)
   user.set_id(currentUserID)
   session['user'] = user.__dict__
   session['logged_in'] = True
-  
-  
+  session['card_on_file'] = False
+
   return render_template("userloggedin.html", user_exist=is_user_exist(user))
 
 @app.route('/logout', methods=['GET'])
@@ -127,9 +138,10 @@ def unregistered_user_input_info():
   phone = request.form['phone_number']
   email = request.form['email']
   user = User(name, email, password)
-
+  user.set_phone_number(phone)
   session['user'] = user.__dict__
-
+  session['card_on_file'] = False
+  
   return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size']))
 
 @app.route('/table', methods=["POST"])
@@ -142,7 +154,7 @@ def show_available_tables():
   session['size'] = size
 
 
-  if not is_valid_date(date) and not is_valid_time(time):
+  if not is_valid_date(date) or not is_valid_time(time):
     return render_template("reservation.html")
 
   if not session['logged_in']: #Unregistered guest
@@ -153,23 +165,20 @@ def show_available_tables():
 
 @app.route('/processing_data/<date>/<time>/<size>', methods=["POST", "GET"])
 def processing_data(date, time, size):
-
   if (is_weekend(date) or is_holiday(date) and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
-    print(session['card_on_file'])
-    print("Loop Here")
     newTable = Table(date, time, size, 0)
+    
     return render_template("payment.html", client_table=newTable)
 
   hours, minutes = map(int, time.split(':'))
 
   client_table = t.Table(date, int(hours), int(size), None)
   t.fetchall()
-  result = t.find_tables(
-    client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
+  result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
   valid_table = is_table_reserved(result)  # will check if it is empty or not, meaning table reserved or not
-  user_test = session['user']
-  display_info = display(user_test, client_table, result)
+  client = session['user']
+  display_info = display(client, client_table, result)
 
 
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)

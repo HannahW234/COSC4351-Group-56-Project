@@ -4,12 +4,13 @@ class User:
     self.name = name
     self.email = email
     self.password = password
+    self.phone_number = ''
     self.credit_cards = []
 
     self.reward_points = 0 
     self.bill_address = []
     self.mail_address = []
-    self.prefered_diner = 0
+    self.preferred_diner = 0
     self.payment_method = ""
 
   def set_mail_address(self, m):
@@ -19,7 +20,7 @@ class User:
     self.bill_address = b
 
   def add_points(self, points):
-    self.reward_points += self.reward_points
+    self.reward_points += points
   
   def set_id(self, id): 
     self.id = id 
@@ -31,7 +32,16 @@ class User:
     return [self.id, self.name, self.password]
 
   def get_all_info(self):
-    return [self.id, self.name, self.email,  self.password, self.mail_address[0], self.mail_address[1], self.mail_address[2], self.mail_address[3], self.bill_address[0], self.bill_address[1], self.bill_address[2], self.bill_address[3], self.reward_points, self.payment_method, self.prefered_diner]
+    return [self.id, self.name, self.email,  self.password, self.mail_address[0], self.mail_address[1], self.mail_address[2], self.mail_address[3], self.bill_address[0], self.bill_address[1], self.bill_address[2], self.bill_address[3], self.reward_points, self.payment_method, self.preferred_diner]
   
   def add_credit_card(self, credit_card):
     self.credit_cards.append(credit_card)
+    
+  def is_credit_card_on_file(self):
+    return len(self.credit_cards) > 0
+  
+  def set_phone_number(self, phone_num):
+    self.phone_number = phone_num
+    
+  def get_phone_number(self):
+    return self.phone_number
