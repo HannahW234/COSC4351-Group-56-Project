@@ -148,7 +148,7 @@ def unregistered_user_input_info():
   session['user'] = user.__dict__
   session['card_on_file'] = False
   
-  return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size']))
+  return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size'], diner=session['diner']))
 
 @app.route('/reservations', methods=['POST', 'GET'])
 def reservations_page():
@@ -165,6 +165,7 @@ def show_available_tables():
   session['time'] = time
   session['date'] = date
   session['size'] = size
+  session['diner'] = diner
 
 
   if not is_valid_date(date) or not is_valid_time(time):
@@ -172,7 +173,6 @@ def show_available_tables():
 
   if not session['logged_in']: #Unregistered guest
     return render_template("login_unregistered.html")
-
 
   return processing_data(date, time, size, diner)
 
@@ -190,8 +190,9 @@ def processing_data(date, time, size, diner):
   result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
   valid_table = is_table_reserved(result)  # will check if it is empty or not, meaning table reserved or not
-  client = session['user']
+  client = session['user'] ##this is currently not working, needs to be user object not dict
   display_info = display(client, client_table, result)
+  
 
   ###Adding reservation to reservation table for usr data / profile 
   price = int(size) + 0.00
