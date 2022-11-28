@@ -11,11 +11,11 @@
     <div>
         <form action="/confirmation" method="post">
         <label>Name</label>
-        <input type="text" name="name" placeholder="name"><br>
+        <input type="text" name="name" placeholder="name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
         <label>Email:</label>
-        <input type="email" name="email" placeholder="example@domain.com"><br>
+        <input type="email" name="email" placeholder="example@domain.com" required><br>
         <label>Password</label>
-        <input type="text" name="password" placeholder="password"><br>
+        <input type="text" name="password" placeholder="password" required><br>
         <input type="submit" name="login_button" value="Login">
         </form>
     </div>

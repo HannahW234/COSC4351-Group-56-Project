@@ -10,25 +10,25 @@
 <body>
     <form action="/newuser" method="post">
         <label>Name</label>
-        <input type="text" name="name" placeholder="name"><br>
+        <input type="text" name="name" placeholder="name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
         <label>Phone Number:</label>
-        <input type="tel" name="phone_number">
+        <input type="tel" name="phone_number" required>
         <label>Email:</label>
-        <input type="email" name="email" placeholder="example@domain.com"><br>
+        <input type="email" name="email" placeholder="example@domain.com" required><br>
         <label>Password</label>
-        <input type="text" name="password" placeholder="password"><br>
+        <input type="text" name="password" placeholder="password" required><br>
         <br>
         <br>
         <br>
         <p> Mailing Address:</p>
         <label>City</label>
-        <input type="text" name="m_city"><br>
+        <input type="text" name="m_city" required><br>
         <label>State</label>
-        <input type="text" name="m_state"><br>
+        <input type="text" name="m_state" required><br>
         <label>Zip Code</label>
-        <input type="text" name="m_zipcode"><br>
+        <input type="text" name="m_zipcode" required><br>
         <label>Street</label>
-        <input type="text" name="m_street"><br>
+        <input type="text" name="m_street" required><br>
         <br>
         <br>
         <br>

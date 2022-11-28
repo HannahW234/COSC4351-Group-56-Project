@@ -10,8 +10,8 @@
             <h2>Succesfully Logged In. Redirecting to Reservation ...</h2>
             <meta http-equiv = "refresh" content = "1.5; url = {{ url_for('reservation_page')}}" />
         {% else: %}
-            <h2>Failed to log in. Please try again. Redirecting to Home Page ...</h2>
-            <meta http-equiv = "refresh" content = "1.5; url = {{ url_for('home')}}" />
+            <h2>Failed to log in. Please try again. Redirecting to Login Page ...</h2>
+            <meta http-equiv = "refresh" content = "1.5; url = {{ url_for('login_page')}}" />
         {% endif %}
     </div>
 </body>

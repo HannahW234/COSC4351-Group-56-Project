@@ -9,6 +9,7 @@ import tableDatabase as t
 from datatype_check import *
 from creditCardServices import *
 from reservationDatabase import *
+import datetime as dt
 
 
 app = Flask(__name__)
@@ -23,7 +24,7 @@ def start():
   t.create_table_information_database()
   return render_template("index.html")
 
-@app.route("/home", , methods=["POST", "GET"]) ###Different URL so that user is not logged out 
+@app.route("/home", methods=["POST", "GET"]) ###Different URL so that user is not logged out
 def home():
   return render_template("index.html")
 
@@ -59,7 +60,10 @@ def registration_page():
 
 @app.route('/reservation', methods=["POST", "GET"])
 def reservation_page():
-  return render_template("reservation.html")
+  today = str(dt.date.today())
+  one_month_advance = str(dt.date.today() + dt.timedelta(days=30))
+  
+  return render_template("reservation.html", date=today, one_month_advance=one_month_advance)
 
 @app.route('/enter_payment', methods=["POST","GET"])
 def enter_payment():
@@ -137,16 +141,18 @@ def profile_page():
 
   return render_template("profile.html", data=profile_data)
 
-@app.route('/unregistered_user_input_info', methods=["POST"])
+@app.route('/unregistered_user_input_info', methods=["GET", "POST"])
 def unregistered_user_input_info():
   password = ''
   name = request.form['name']
   phone = request.form['phone_number']
   email = request.form['email']
+  
   user = User(name, email, password)
   user.set_phone_number(phone)
   session['user'] = user.__dict__
   session['card_on_file'] = False
+  
   
   return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size'], diner=session['diner']))
 
@@ -168,13 +174,13 @@ def show_available_tables():
   session['diner'] = diner
 
 
-  if not is_valid_date(date) or not is_valid_time(time):
+  if not is_valid_date(date) or not is_valid_time(date, time):
     return render_template("reservation.html")
 
   if not session['logged_in']: #Unregistered guest
     return render_template("login_unregistered.html")
 
-  return processing_data(date, time, size, diner)
+  return processing_data(session['date'], session['time'], session['size'], session['diner'])
 
 @app.route('/processing_data/<date>/<time>/<size>/<diner>', methods=["POST", "GET"])
 def processing_data(date, time, size, diner):
@@ -199,11 +205,14 @@ def processing_data(date, time, size, diner):
   if is_weekend(date) or is_holiday(date): 
     price = price + 5
   reservation_data = [session['user']['id'], diner, date, time, size, price]
-  if valid_table: 
-    add_reservation(reservation_data)
-    add_points(session['user']['id'], int(price))
-
-  return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)
+  if valid_table:
+    if session['logged_in']:
+      add_reservation(reservation_data)
+      add_points(session['user']['id'], int(price))
+  
+  is_high_traffic_day = is_weekend(date) or is_holiday(date)
+  
+  return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info, is_high_traffic_day=is_high_traffic_day)
 
 
 

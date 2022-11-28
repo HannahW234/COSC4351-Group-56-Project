@@ -1,10 +1,10 @@
-from datetime import datetime
+import datetime
 import holidays
 
 
 def is_weekend(date):
   try:
-    date = datetime.strptime(date, '%Y-%m-%d').date()
+    date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
     return date.isoweekday() == 7 or date.isoweekday() == 6
   except:
     return False

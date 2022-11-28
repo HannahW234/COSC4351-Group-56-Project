@@ -2,6 +2,7 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -23,12 +24,12 @@
         <br>
         <br>  
         <label for="date">Select Date: </label>
-        <input type="date" name="date" value="2022-11-25"><br>
+        <input type="date" name="date" min={{ date }} value={{ date }} max={{ one_month_advance }} required><br>
           <label for="time">Select Time: </label>
-        <input type="time" name="time" value="14:00">
+        <input type="time" name="time" value="14:00" required>
         <br>
           <labe for="size">Table for:</labe>
-          <input type="number" name="size" placeholder="people" width="10px" value="4">
+          <input type="number" name="size" placeholder="people" width="10px" value="4" required>
         <br>
           <input type="submit" name="check" value="Confirm This Reservation">
         </form>

@@ -13,6 +13,9 @@
         {% for info in display_info: %}
         <p> {{ info }}</p>
         {% endfor %}
+        {% if is_high_traffic_day: %}
+            <h2> $10 no show charge will be applied. </h2>
+        {% endif %}
         <form action="/home" method="post">
             <button>Back to Home</button>
         </form>

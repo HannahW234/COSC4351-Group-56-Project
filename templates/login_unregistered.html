@@ -10,9 +10,9 @@
 <div>
   <h3>Guest Checkout</h3>
         <form method="post" action="{{ url_for('unregistered_user_input_info') }}">
-  <label>Name: </label> <input type="text" name="name" value="Sample Name">
-  <label>Email: </label> <input type="email" name="email" value="sample@example.com">
-  <label>Phone: </label> <input type="tel" name="phone_number" value="0123456789">
+  <label>Name: </label> <input type="text" name="name" value="Sample Name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)">
+  <label>Email: </label> <input type="email" name="email" value="sample@example.com" required>
+  <label>Phone: </label> <input type="tel" name="phone_number" value="0123456789" required>
         <input type="submit" name="continue" value="Continue to Reservation">
         </form>
 </div>

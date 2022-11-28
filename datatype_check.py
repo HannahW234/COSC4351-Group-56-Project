@@ -1,21 +1,35 @@
 import datetime
+import re
 
-import tableDatabase
 from table import Table
-from user import User
+from dateService import is_weekend, is_holiday
 
 
 def is_valid_date(date):
     try:
-        datetime.datetime.strptime(date, '%Y-%m-%d')
+        new_date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        if new_date < datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d'):
+            return False
     except ValueError:
         return False
 
     return True
 
-def is_valid_time(time):
+def is_valid_name(name):
+    first_last_name_regex = re.compile(r"^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)")
+    
+    if first_last_name_regex.match(name) == None:
+        return False
+    
+    return True
+
+def is_valid_time(date, time):
     try:
-        datetime.datetime.strptime(time, '%H:%M')
+        new_time = datetime.datetime.strptime(time, '%H:%M').time()
+        new_date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        if new_date == datetime.datetime.today().date:
+            if new_time < datetime.datetime.now().time():
+                return False
     except ValueError:
         return False
 

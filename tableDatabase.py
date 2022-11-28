@@ -30,7 +30,7 @@ def create_table_information_database():
           quantity INTEGER
   )
   """)
-    days_in_advance = 2
+    days_in_advance = 6
     base = datetime.datetime.today()
     date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
     for date in date_list:
