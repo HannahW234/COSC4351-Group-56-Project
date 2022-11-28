@@ -14,14 +14,34 @@
         email: {{data[1]}} <br>
         mailing address: {{data[3]}}<br>
         billing address: {{data[4]}} <br>
-        favorite diner: 
+        favorite diner: {{data[5]}}
     </p>
 </div>
 <div class="reservations">
-    <h1> My Reservations </h1>
+    <h1> My Reservations</h1>
+    <table>
+        <tr>
+          <th>Diner</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Amount of People</th>
+          <th>Amount Spent</th>
+        </tr>
+        {% for item in data[6]%}
+            <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            </tr>
+        {% endfor %}
+      </table>
+      <a href="/reservations"> See More Details</href> </a>
 </div>
 <div class="rewards">
     <h1> My Rewards </h1>
+    My Points: {{data[7]}}
 </div>
 <div class="credit_info">
     <h1> My Payment Information </h1>

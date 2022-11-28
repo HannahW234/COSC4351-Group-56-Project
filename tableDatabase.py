@@ -148,7 +148,7 @@ def find_quantity(table:Table):
     c = connection.cursor()
     size = table.size
     if size % 2 == 1:
-        size += 1
+        size += 1 
     quanitityQuery = ("SELECT quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND tablesize == ?")
     c.execute(quanitityQuery, (table.date, table.time, table.size,))
     quantity = c.fetchone()

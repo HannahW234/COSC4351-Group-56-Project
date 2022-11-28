@@ -13,7 +13,14 @@
         {% for info in display_info: %}
         <p> {{ info }}</p>
         {% endfor %}
-        {% endif %}
+        <form action="/home" method="post">
+            <button>Back to Home</button>
+        </form>
+        <form action="/reservations" method="post">
+            <button>Show My Reservations</button>
+        </form>
+    {% endif %}
+
     </div>
 </body>
 </html>

@@ -63,7 +63,6 @@ def add_user(user: User):
   connection.close()
   return id 
 
-
 def delete_ALL():
   connection = sqlite3.connect('customer.db')
   
@@ -73,7 +72,6 @@ def delete_ALL():
   
   connection.commit()
   connection.close()
-
 
 def fetchall():
   connection = sqlite3.connect('customer.db')
@@ -132,8 +130,28 @@ def is_user_exist(user: User) -> bool:
   
   return found
 
+def add_points(userID, points): 
+  connection = sqlite3.connect('customer.db')
+  
+  c = connection.cursor()
+  c.execute("SELECT customer_id, points FROM customers WHERE customer_id = '%s'" % userID)
 
-# user = User('hiris', 'example@domain.com', '123456')
-# add_user(user)
-#fetchall()
+  items = c.fetchall()
+  new_points = items[0][1] + points
+  c.execute("UPDATE customers SET points = ? WHERE customer_id = ?", (new_points, userID))
+
+  connection.commit()
+  connection.close()
+
+def get_points(userID): 
+  connection = sqlite3.connect('customer.db')
+  
+  c = connection.cursor()
+  c.execute("SELECT customer_id, points FROM customers WHERE customer_id = '%s'" % userID)
+  items = c.fetchall()
+  points = items[0][1]
+
+  connection.commit()
+  connection.close()
+  return points 
 

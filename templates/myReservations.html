@@ -1,0 +1,56 @@
+{% extends 'header.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Reservations</title>
+</head>
+<div class="reservations">
+    <h1> My Reservations</h1>
+    <table>
+        <tr>
+          <th>Diner</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Amount of People</th>
+          <th>Amount Spent</th>
+        </tr>
+        {% for item in current_reservations%}
+            <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            </tr>
+        {% endfor %}
+      </table>
+    
+</div>
+<div class="past_reservations">
+    <h1> Past Reservations </h1>
+    <table>
+        <tr>
+          <th>Diner</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Amount of People</th>
+          <th>Amount Spent</th>
+        </tr>
+        {% for item in previous_reservations%}
+            <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            </tr>
+        {% endfor %}
+      </table>
+</div>
+<body>
+
+{% endblock %}

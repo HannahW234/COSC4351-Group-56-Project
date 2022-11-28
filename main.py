@@ -8,6 +8,7 @@ from creditDatabase import *
 import tableDatabase as t
 from datatype_check import *
 from creditCardServices import *
+from reservationDatabase import *
 
 
 app = Flask(__name__)
@@ -16,14 +17,15 @@ create_user_information_database()
 #session['logged_in'] = False
 
 @app.route("/")
-def home():
+def start():
   session['logged_in'] = False
   session['user'] = None
-  
   t.create_table_information_database()
-  
   return render_template("index.html")
 
+@app.route("/home") ###Different URL so that user is not logged out 
+def home():
+  return render_template("index.html")
 
 @app.route('/login', methods=["POST", "GET"])
 def login_page():
@@ -69,6 +71,7 @@ def enter_payment():
   time = request.form['client_time']
   size = request.form['client_size']
   date = request.form['client_date']
+  diner = request.form['reservation_diner']
   
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
   session['user']['credit_cards'].append(user_credit_card.__dict__)
@@ -78,9 +81,11 @@ def enter_payment():
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
     add_credit_card(credit_info)
-    session['points'] = 1
 
-  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size)
+  points = int(size)
+  if is_weekend(date) or is_holiday(date): 
+    points = points + 5 
+  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size, reservation_diner=diner, points = points)
 
 @app.route('/payment', methods=["POST","GET"])
 def payment_page():
@@ -114,20 +119,21 @@ def creating_new_user_page():
 @app.route('/logout', methods=['GET'])
 def logout():
   session['logged_in'] = False
+  session['user'] = {}
   return render_template("index.html")
 
 @app.route('/profile', methods=["POST", "GET"])
 def profile_page(): 
   currentID = session['user']['id']
   credit_info = get_user_credit_data(currentID)
-  #points = get_points(currentID)
-  #favorite_diner = get_diner(currentID) ###NEED TO IMPLEMENT DINER SYSTEM
-  #current_reservations = get_user_reservations(currentID) ##IMPLEMENT USER RESERVATIONS 
+  points = get_points(currentID)
+  favorite_diner = calculate_preffered_diner(currentID) ###NEED TO IMPLEMENT DINER SYSTEM
+  previous_reservations, current_reservations = get_user_reservations(currentID) ##IMPLEMENT USER RESERVATIONS 
   name = session['user']['name']
   email = session['user']['email']
   mail_address = get_address(currentID, "mail")
   bill_address = get_address(currentID, "bill")
-  profile_data = [name, email, credit_info, mail_address, bill_address]
+  profile_data = [name, email, credit_info, mail_address, bill_address, favorite_diner, current_reservations, points]
 
   return render_template("profile.html", data=profile_data)
 
@@ -144,11 +150,18 @@ def unregistered_user_input_info():
   
   return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size']))
 
+@app.route('/reservations', methods=['POST', 'GET'])
+def reservations_page():
+  currentID = session['user']['id']
+  previous, current = get_user_reservations(currentID)
+  return render_template("myReservations.html", current_reservations=current, previous_reservations = previous)
+
 @app.route('/table', methods=["POST"])
 def show_available_tables():
   time = request.form['time']
   date = request.form['date']
   size = request.form['size']
+  diner = request.form['diner']
   session['time'] = time
   session['date'] = date
   session['size'] = size
@@ -161,13 +174,13 @@ def show_available_tables():
     return render_template("login_unregistered.html")
 
 
-  return processing_data(date, time, size)
+  return processing_data(date, time, size, diner)
 
-@app.route('/processing_data/<date>/<time>/<size>', methods=["POST", "GET"])
-def processing_data(date, time, size):
+@app.route('/processing_data/<date>/<time>/<size>/<diner>', methods=["POST", "GET"])
+def processing_data(date, time, size, diner):
   if (is_weekend(date) or is_holiday(date) and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
     newTable = Table(date, time, size, 0)
-    
+    newTable.setDiner(diner)
     return render_template("payment.html", client_table=newTable)
 
   hours, minutes = map(int, time.split(':'))
@@ -180,6 +193,14 @@ def processing_data(date, time, size):
   client = session['user']
   display_info = display(client, client_table, result)
 
+  ###Adding reservation to reservation table for usr data / profile 
+  price = int(size) + 0.00
+  if is_weekend(date) or is_holiday(date): 
+    price = price + 5
+  reservation_data = [session['user']['id'], diner, date, time, size, price]
+  if valid_table: 
+    add_reservation(reservation_data)
+    add_points(session['user']['id'], int(price))
 
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info)
 
