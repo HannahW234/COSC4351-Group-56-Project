@@ -23,7 +23,7 @@ def start():
   t.create_table_information_database()
   return render_template("index.html")
 
-@app.route("/home") ###Different URL so that user is not logged out 
+@app.route("/home", , methods=["POST", "GET"]) ###Different URL so that user is not logged out 
 def home():
   return render_template("index.html")
 
