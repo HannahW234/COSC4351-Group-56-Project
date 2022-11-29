@@ -8,6 +8,12 @@
     <title>Registration</title>
 </head>
 <body>
+    <div class = "failure_message"> 
+    {% if failure: %}
+        One or more entries were inputted incorrectly. Please try again. 
+        <br>
+    {% endif %}
+    </div>
     <form action="/newuser" method="post">
         <label>Name</label>
         <input type="text" name="name" placeholder="name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
@@ -32,7 +38,7 @@
         <br>
         <br>
         <br>
-        <input type="checkbox" name="sameAsMailing">
+        <input type="checkbox" name="sameAsMailing" value = "on">
         <label for="sameAsMailing"> Billing address is the same as mailing address</label><br>
         <p> Billing Address:</p>
         <label>City</label>

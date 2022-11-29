@@ -56,7 +56,7 @@ def confirmation_page():
 
 @app.route('/registration', methods=["GET"])
 def registration_page():
-  return render_template("registration.html")
+  return render_template("registration.html", failure=False)
 
 @app.route('/reservation', methods=["POST", "GET"])
 def reservation_page():
@@ -103,10 +103,15 @@ def creating_new_user_page():
   phone_number = request.form['phone_number']
   mail_address = [request.form['m_city'], request.form['m_state'], request.form['m_zipcode'], request.form['m_street']]
   
-  if not request.form['sameAsMailing']: 
-    bill_address = [ request.form['b_city'], request.form['b_state'], request.form['b_zipcode'], request.form['b_street']]
+
+  if request.form.get('sameAsMailing') == "on": 
+    bill_address = mail_address
   else: 
     bill_address = mail_address
+    bill_address = [request.form['b_city'], request.form['b_state'], request.form['b_zipcode'], request.form['b_street']]
+    if "" in bill_address: 
+      print("Checkbox error")
+      return render_template("registration.html", failure=True)
 
   user = User(name, email, password)
   user.set_mail_address(mail_address)
@@ -131,7 +136,9 @@ def profile_page():
   currentID = session['user']['id']
   credit_info = get_user_credit_data(currentID)
   points = get_points(currentID)
-  favorite_diner = calculate_preffered_diner(currentID) ###NEED TO IMPLEMENT DINER SYSTEM
+  try: 
+    favorite_diner = calculate_preffered_diner(currentID) ### Will not work if user has not made reservation
+  except: pass 
   previous_reservations, current_reservations = get_user_reservations(currentID) ##IMPLEMENT USER RESERVATIONS 
   name = session['user']['name']
   email = session['user']['email']
