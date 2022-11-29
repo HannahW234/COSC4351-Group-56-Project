@@ -26,8 +26,8 @@ def is_valid_name(name):
 def is_valid_time(date, time):
     try:
         new_time = datetime.datetime.strptime(time, '%H:%M').time()
-        new_date = datetime.datetime.strptime(date, '%Y-%m-%d')
-        if new_date == datetime.datetime.today().date:
+        new_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        if new_date == datetime.date.today():
             if new_time < datetime.datetime.now().time():
                 return False
     except ValueError:
@@ -47,6 +47,7 @@ def display(user_dict, table: Table, tables_result) -> list:
     display_str = []
 
     if reserving_tables:
+        display_str.append(f"Diner Location: {table.getDiner()}")
         display_str.append(f"Name of reservation: {user_dict['name']}")
         display_str.append(f"Time of reservation: {datetime.datetime.strptime(str(table.time) + ':00','%H:%M').strftime('%I:%M %p')}")
         display_str.append(f"Date of reservation: {table.date}")

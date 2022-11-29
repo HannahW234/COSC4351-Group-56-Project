@@ -95,12 +95,12 @@ def update_quantity(table: Table):
         "tablesize == ? AND diner == ?")
     c.execute(quanitityQuery, (table.date, table.time, table.size, table.getDiner(),))
     item = c.fetchone()
-    if not item or item[3] < 1:
+    if not item or item[4] < 1:
         connection.commit()
         connection.close()
         return False
 
-    sqlquery = (f"UPDATE remainingTables SET quantity = {item[3] - 1} WHERE reservation_date == ? AND  reservation_time == ? AND "
+    sqlquery = (f"UPDATE remainingTables SET quantity = {item[4] - 1} WHERE reservation_date == ? AND  reservation_time == ? AND "
                 "tablesize == ? AND diner == ?")
     c.execute(sqlquery, (table.date, table.time,table.size, table.getDiner(),))
     connection.commit()
@@ -167,5 +167,3 @@ def find_quantity(table:Table):
 def find_max_capacity(sequence):
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
 
-
-create_table_information_database()

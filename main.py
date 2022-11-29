@@ -175,7 +175,7 @@ def show_available_tables():
 
 
   if not is_valid_date(date) or not is_valid_time(date, time):
-    return render_template("reservation.html")
+    return redirect(url_for('reservation_page'))
 
   if not session['logged_in']: #Unregistered guest
     return render_template("login_unregistered.html")
