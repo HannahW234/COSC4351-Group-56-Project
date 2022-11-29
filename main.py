@@ -184,7 +184,8 @@ def show_available_tables():
 
 @app.route('/processing_data/<date>/<time>/<size>/<diner>', methods=["POST", "GET"])
 def processing_data(date, time, size, diner):
-  if (is_weekend(date) or is_holiday(date) and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
+  is_high_traffic_day = is_weekend(date) or is_holiday(date)
+  if (is_high_traffic_day and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
     newTable = Table(date, time, size, 0)
     newTable.setDiner(diner)
     return render_template("payment.html", client_table=newTable)
@@ -192,6 +193,7 @@ def processing_data(date, time, size, diner):
   hours, minutes = map(int, time.split(':'))
 
   client_table = t.Table(date, int(hours), int(size), None)
+  client_table.setDiner(diner)
   t.fetchall()
   result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
@@ -210,7 +212,6 @@ def processing_data(date, time, size, diner):
       add_reservation(reservation_data)
       add_points(session['user']['id'], int(price))
   
-  is_high_traffic_day = is_weekend(date) or is_holiday(date)
   
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info, is_high_traffic_day=is_high_traffic_day)
 

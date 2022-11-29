@@ -3,6 +3,7 @@ import sqlite3
 from table import Table
 import functools
 
+DINERS = ["Pink's Pizza", "Buffalo Bayou Brewery", "Space City Diner", "Galveston Grill", "Midtown Deli"]
 
 def isDateAlreadyInDatabase(date):
     connection = sqlite3.connect('tables.db')
@@ -19,29 +20,33 @@ def isDateAlreadyInDatabase(date):
 
 
 def create_table_information_database():
+    
     connection = sqlite3.connect('tables.db')
 
     c = connection.cursor()
     # creating table, dont run again becasue table has already been created
     c.execute("""CREATE TABLE IF NOT EXISTS remainingTables (
+          diner TEXT,
           reservation_date DATE,
           reservation_time INTEGER,
           tablesize INTEGER ,
           quantity INTEGER
   )
   """)
-    days_in_advance = 6
+    days_in_advance = 2
     base = datetime.datetime.today()
     date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
     for date in date_list:
         # if the day already exist in database, then dont create new tables on that day
         if isDateAlreadyInDatabase(date):
             continue
-        for time in range(12, 15, 2):
-            for size in range(2, 5, 2):
-                #date.strftime('%Y-%m-%d')
-                new_table = Table(date, time, size, 2)
-                add_table(new_table)
+        for diner in DINERS:
+            for time in range(12, 15, 2):
+                for size in range(2, 9, 2):
+                    #date.strftime('%Y-%m-%d')
+                    new_table = Table(date, time, size, 2)
+                    new_table.setDiner(diner)
+                    add_table(new_table)
         
 
     connection.commit()
@@ -50,10 +55,9 @@ def create_table_information_database():
 
 def add_table(table: Table):
     connection = sqlite3.connect('tables.db')
-
     c = connection.cursor()
     # to add to table
-    c.execute("INSERT INTO remainingTables VALUES (?, ?, ?, ?)", table.get_info())
+    c.execute("INSERT INTO remainingTables VALUES (?, ?, ?, ?, ?)", [table.getDiner()] + table.get_info())
 
     connection.commit()
     connection.close()
@@ -88,8 +92,8 @@ def update_quantity(table: Table):
 
 
     quanitityQuery = ("SELECT * FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND "
-        "tablesize == ?")
-    c.execute(quanitityQuery, (table.date, table.time, table.size,))
+        "tablesize == ? AND diner == ?")
+    c.execute(quanitityQuery, (table.date, table.time, table.size, table.getDiner(),))
     item = c.fetchone()
     if not item or item[3] < 1:
         connection.commit()
@@ -97,8 +101,8 @@ def update_quantity(table: Table):
         return False
 
     sqlquery = (f"UPDATE remainingTables SET quantity = {item[3] - 1} WHERE reservation_date == ? AND  reservation_time == ? AND "
-                "tablesize == ?")
-    c.execute(sqlquery, (table.date, table.time,table.size,))
+                "tablesize == ? AND diner == ?")
+    c.execute(sqlquery, (table.date, table.time,table.size, table.getDiner(),))
     connection.commit()
     connection.close()
 
@@ -116,8 +120,8 @@ def find_tables(clientTable: Table):
     connection = sqlite3.connect('tables.db')
     c = connection.cursor()
 
-    quantityQuery = ("SELECT tablesize, quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ?")
-    c.execute(quantityQuery, (clientTable.date, clientTable.time,))
+    quantityQuery = ("SELECT tablesize, quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND diner == ?")
+    c.execute(quantityQuery, (clientTable.date, clientTable.time, clientTable.getDiner(),))
     item = c.fetchall()
 
     if find_max_capacity(item) < client_size:
@@ -126,7 +130,7 @@ def find_tables(clientTable: Table):
         return []
 
     while remainingClient > 0:
-        c.execute(quantityQuery, (clientTable.date, clientTable.time,))
+        c.execute(quantityQuery, (clientTable.date, clientTable.time, clientTable.getDiner(),))
         availableTables = c.fetchall()
         availableTables.reverse()
 
@@ -135,6 +139,7 @@ def find_tables(clientTable: Table):
                 remainingClient -= tableSize
                 result.append(tableSize)
                 newTable = Table(clientTable.date, clientTable.time, tableSize, find_quantity(clientTable))
+                newTable.setDiner(clientTable.getDiner())
                 update_quantity(newTable)
                 break
 
@@ -149,8 +154,8 @@ def find_quantity(table:Table):
     size = table.size
     if size % 2 == 1:
         size += 1 
-    quanitityQuery = ("SELECT quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND tablesize == ?")
-    c.execute(quanitityQuery, (table.date, table.time, table.size,))
+    quanitityQuery = ("SELECT quantity FROM remainingTables WHERE reservation_date == ? AND reservation_time == ? AND tablesize == ? AND diner == ?")
+    c.execute(quanitityQuery, (table.date, table.time, table.size, table.getDiner(), ))
     quantity = c.fetchone()
 
     connection.commit()
@@ -162,3 +167,5 @@ def find_quantity(table:Table):
 def find_max_capacity(sequence):
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
 
+
+create_table_information_database()
