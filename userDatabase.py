@@ -29,7 +29,7 @@ def create_user_information_database():
   connection.commit()
   connection.close()
 
-create_user_information_database()
+
 
 def get_new_id(): #Genereates a unique ID for the new customer
   connection = sqlite3.connect('customer.db')
