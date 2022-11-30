@@ -21,9 +21,11 @@
         <form action="/home" method="post">
             <button>Back to Home</button>
         </form>
+        {% if session['logged_in'] %}
         <form action="/reservations" method="post">
             <button>Show My Reservations</button>
         </form>
+        {% endif %}
     {% endif %}
 
     </div>

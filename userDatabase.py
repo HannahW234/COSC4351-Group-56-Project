@@ -143,6 +143,27 @@ def add_points(userID, points):
   connection.commit()
   connection.close()
 
+def add_payment_method(userID, method):
+  connection = sqlite3.connect('customer.db')
+  
+  c = connection.cursor()
+  c.execute("UPDATE customers SET payment_method = ? WHERE customer_id = ?", (method, userID))
+
+  connection.commit()
+  connection.close()
+
+def get_payment_method(userID): 
+  connection = sqlite3.connect('customer.db')
+  
+  c = connection.cursor()
+  c.execute("SELECT customer_id, payment_method FROM customers WHERE customer_id = '%s'" % userID)
+  items = c.fetchall()
+  method = items[0][1]
+
+  connection.commit()
+  connection.close()
+  return method
+
 def get_points(userID): 
   connection = sqlite3.connect('customer.db')
   
