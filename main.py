@@ -225,9 +225,6 @@ def processing_data(date, time, size, diner):
   t.fetchall()
   result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
-
-
-
   valid_table = is_table_reserved(result)  # will check if it is empty or not, meaning table reserved or not
   client = session['user'] ##this is currently not working, needs to be user object not dict
   display_info = display(client, client_table, result)
@@ -240,7 +237,7 @@ def processing_data(date, time, size, diner):
     price = int(size) + 0.00
     if is_weekend(date) or is_holiday(date): 
       price = price + 5
-    reservation_data = [session['user']['id'], diner_convert[diner], date, time, size, price]
+    reservation_data = [session['user']['id'], new_diner, date, time, size, price]
     if valid_table:
       if session['logged_in']:
         add_reservation(reservation_data)
