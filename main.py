@@ -78,18 +78,21 @@ def enter_payment():
   diner = request.form['reservation_diner']
   
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
-  session['user']['credit_cards'].append(user_credit_card.__dict__)
-  session['card_on_file'] = True
-  
-  if session['logged_in']: 
+  if session['logged_in']:
+    session['user']['credit_cards'].append(user_credit_card.__dict__)
+    session['card_on_file'] = True
+   
     currentUserID = session['user']['id']
     credit_info = [currentUserID, name, credit_num, security, exp_date]
     add_credit_card(credit_info)
 
-  points = int(size)
-  if is_weekend(date) or is_holiday(date): 
-    points = points + 5 
-  return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size, reservation_diner=diner, points = points)
+    points = int(size)
+    if is_weekend(date) or is_holiday(date): 
+      points = points + 5 
+    
+    return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size, reservation_diner=diner, points = points)
+  
+  return render_template("login_unregistered.html")#For unregistered users 
 
 @app.route('/payment', methods=["POST","GET"])
 def payment_page():
@@ -136,6 +139,7 @@ def profile_page():
   currentID = session['user']['id']
   credit_info = get_user_credit_data(currentID)
   points = get_points(currentID)
+  payment_method = get_payment_method(currentID)
   try: 
     favorite_diner = calculate_preffered_diner(currentID) ### Will not work if user has not made reservation
   except: pass 
@@ -144,7 +148,7 @@ def profile_page():
   email = session['user']['email']
   mail_address = get_address(currentID, "mail")
   bill_address = get_address(currentID, "bill")
-  profile_data = [name, email, credit_info, mail_address, bill_address, favorite_diner, current_reservations, points]
+  profile_data = [name, email, credit_info, mail_address, bill_address, favorite_diner, current_reservations, points, payment_method]
 
   return render_template("profile.html", data=profile_data)
 
@@ -179,9 +183,19 @@ def show_available_tables():
   session['date'] = date
   session['size'] = size
   session['diner'] = diner
+  
+  payment_method = request.form['method']
+  if session['logged_in']: 
+    currentID = session['user']['id']
+    add_payment_method(currentID, payment_method)
 
+  if payment_method == "Credit": 
+    newTable = Table(date, time, size, 0)
+    newTable.setDiner(diner)
+    return render_template("payment.html", client_table=newTable)
 
   if not is_valid_date(date) or not is_valid_time(date, time):
+    print("Not valid")
     return redirect(url_for('reservation_page'))
 
   if not session['logged_in']: #Unregistered guest
@@ -191,16 +205,22 @@ def show_available_tables():
 
 @app.route('/processing_data/<date>/<time>/<size>/<diner>', methods=["POST", "GET"])
 def processing_data(date, time, size, diner):
+  diner_convert = {"Space": "Space City Diner", "Pink's": "Pink's Pizza", "Buffalo": "Buffalo Bayou Brewery", "Galveston": "Galveston Grill", "Midtown": "Midtown Deli"}
+  new_diner = diner ##########needs to go to not user login first I think 
+  if " " not in diner.strip(): 
+    new_diner = diner_convert[diner.strip()]
+  print(new_diner)
+
   is_high_traffic_day = is_weekend(date) or is_holiday(date)
   if (is_high_traffic_day and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
     newTable = Table(date, time, size, 0)
-    newTable.setDiner(diner)
+    newTable.setDiner(new_diner)
     return render_template("payment.html", client_table=newTable)
 
   hours, minutes = map(int, time.split(':'))
 
   client_table = t.Table(date, int(hours), int(size), None)
-  client_table.setDiner(diner)
+  client_table.setDiner(new_diner)
   t.fetchall()
   result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
@@ -209,15 +229,16 @@ def processing_data(date, time, size, diner):
   display_info = display(client, client_table, result)
   
 
-  ###Adding reservation to reservation table for usr data / profile 
-  price = int(size) + 0.00
-  if is_weekend(date) or is_holiday(date): 
-    price = price + 5
-  reservation_data = [session['user']['id'], diner, date, time, size, price]
-  if valid_table:
-    if session['logged_in']:
-      add_reservation(reservation_data)
-      add_points(session['user']['id'], int(price))
+  ###Adding reservation to reservation table for user data / profile 
+  if session['logged_in']: 
+    price = int(size) + 0.00
+    if is_weekend(date) or is_holiday(date): 
+      price = price + 5
+    reservation_data = [session['user']['id'], diner_convert[diner], date, time, size, price]
+    if valid_table:
+      if session['logged_in']:
+        add_reservation(reservation_data)
+        add_points(session['user']['id'], int(price))
   
   
   return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info, is_high_traffic_day=is_high_traffic_day)
