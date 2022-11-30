@@ -17,5 +17,11 @@ class MyTestCase(unittest.TestCase):
     def test_is_valid_time_is_false(self):
         self.assertFalse(dc.is_valid_time(dc.datetime.date.today(), '11:00'))
 
+    def test_is_valid_date_is_true(self):
+        self.assertTrue(dc.is_valid_date("2023-11-28"))
+
+    def test_is_valid_date_is_false(self):
+        self.assertFalse(dc.is_valid_date("2021-11-28"))
+
 if __name__ == '__main__':
     unittest.main()

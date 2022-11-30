@@ -10,7 +10,7 @@ def is_valid_date(date):
         new_date = datetime.datetime.strptime(date, '%Y-%m-%d')
         if new_date < datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d'):
             return False
-    except ValueError:
+    except TypeError:
         return False
 
     return True
@@ -30,7 +30,7 @@ def is_valid_time(date, time):
         if new_date == datetime.date.today():
             if new_time < datetime.datetime.now().time():
                 return False
-    except ValueError:
+    except TypeError:
         return False
 
     return True
