@@ -145,6 +145,8 @@ def find_tables(clientTable: Table):
 
     connection.commit()
     connection.close()
+
+
     return result
 
 

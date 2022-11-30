@@ -4,6 +4,7 @@
     <div>
         {% if not valid_credit: %}
             <h2>This was not a valid credit card. Please try again</h2>
+            <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('reservation_page')}}" />
         {% else: %}
             <h2>Success! Thank you for reserving a table </h2>
             {% if session['logged_in'] %}

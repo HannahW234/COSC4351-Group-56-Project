@@ -10,6 +10,7 @@ from datatype_check import *
 from creditCardServices import *
 from reservationDatabase import *
 import datetime as dt
+import notifyService as ns
 
 
 app = Flask(__name__)
@@ -204,10 +205,15 @@ def processing_data(date, time, size, diner):
   t.fetchall()
   result = t.find_tables(client_table)  # either will be empty list [] or list with tables that were reserved ie. [4,2,2]
 
+
+
+
   valid_table = is_table_reserved(result)  # will check if it is empty or not, meaning table reserved or not
   client = session['user'] ##this is currently not working, needs to be user object not dict
   display_info = display(client, client_table, result)
-  
+
+  if len(result) > 1:
+    ns.addToFile(diner, result, client_table, client['name'])
 
   ###Adding reservation to reservation table for usr data / profile 
   price = int(size) + 0.00
