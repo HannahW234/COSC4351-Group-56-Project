@@ -18,7 +18,7 @@
         <label>Name</label>
         <input type="text" name="name" placeholder="name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
         <label>Phone Number:</label>
-        <input type="tel" name="phone_number" required>
+        <input type="tel" name="phone_number" required pattern="^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$">
         <label>Email:</label>
         <input type="email" name="email" placeholder="example@domain.com" required><br>
         <label>Password</label>

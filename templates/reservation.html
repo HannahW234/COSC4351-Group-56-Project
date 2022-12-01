@@ -26,10 +26,10 @@
         <label for="date">Select Date: </label>
         <input type="date" name="date" min={{ date }} value={{ date }} max={{ one_month_advance }} required><br>
           <label for="time">Select Time: </label>
-        <input type="time" name="time" value="14:00" required>
+        <input type="time" name="time" min="12:00" value="14:00" max="19:00" required>
         <br>
           <labe for="size">Table for:</labe>
-          <input type="number" name="size" placeholder="people" width="10px" value="4" required>
+          <input type="number" name="size" placeholder="people" width="10px" value="2" required>
         <br>
         <br>
         <label for="method">Choose a Preffered Payment Method: </label>
