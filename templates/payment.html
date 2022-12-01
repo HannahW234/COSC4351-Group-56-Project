@@ -6,6 +6,9 @@
     <title>Enter Payment and Confirm Reservation</title>
 </head>
 <body>
+    {% if is_high_traffic: %}
+        <p>Notice: You must put in your payment information because your reservation is on a high traffic day </p>
+    {% endif %}
     <form action="/enter_payment" method="post">
         <h2>Input Credit Info Here:  </h2>
         <label>Credit Card Holder Name</label>
@@ -20,6 +23,7 @@
         <input type="hidden" name="client_size" value={{ client_table.size }}>
         <input type="hidden" name="client_time" value={{ client_table.time }}>
         <input type="hidden" name="reservation_diner" value={{ client_table.diner}}>
+        <input type="hidden" name="high_traffic" value={{ is_high_traffic}}>
         <input type="submit" name="confirm" value="Confirm Order">
     </form>
 </body>

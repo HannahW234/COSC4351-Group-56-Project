@@ -77,6 +77,7 @@ def enter_payment():
   size = request.form['client_size']
   date = request.form['client_date']
   diner = request.form['reservation_diner']
+  high_traffic = request.form['high_traffic']
   
   user_credit_card = CreditCard(name, credit_num, exp_date, security)
   if session['logged_in']:
@@ -93,11 +94,14 @@ def enter_payment():
     
     return render_template("paymentConfirmation.html", valid_credit=user_credit_card.is_card_valid(), client_date=date, client_time=time, client_size=size, reservation_diner=diner, points = points)
   
-  return render_template("login_unregistered.html")#For unregistered users 
+  if not high_traffic: 
+    return render_template("login_unregistered.html")#For unregistered users 
+  session['stop'] = True
+  return redirect(url_for('processing_data', date=session['date'], time=session['time'], size=session['size'], diner=session['diner']))
 
 @app.route('/payment', methods=["POST","GET"])
 def payment_page():
-  return render_template("payment.html")
+  return render_template("payment.html", is_high_traffic = False)
 
 @app.route('/newuser', methods=["POST", "GET"])
 def creating_new_user_page():
@@ -177,6 +181,7 @@ def reservations_page():
 
 @app.route('/table', methods=["POST"])
 def show_available_tables():
+  session['stop'] = False
   time = request.form['time']
   date = request.form['date']
   size = request.form['size']
@@ -194,7 +199,7 @@ def show_available_tables():
   if payment_method == "Credit": 
     newTable = Table(date, time, size, 0)
     newTable.setDiner(diner)
-    return render_template("payment.html", client_table=newTable)
+    return render_template("payment.html", client_table=newTable, is_high_taffic = is_weekend(date) or is_holiday(date))
 
   if not is_valid_date(date) or not is_valid_time(date, time):
     print("Not valid")
@@ -214,10 +219,10 @@ def processing_data(date, time, size, diner):
   print(new_diner)
 
   is_high_traffic_day = is_weekend(date) or is_holiday(date)
-  if (is_high_traffic_day and not session['logged_in']) and not session['card_on_file']: #Unregistered guest on holiday/weekend
+  if (is_high_traffic_day and not session['logged_in']) and not session['card_on_file'] and not session['stop']: #Unregistered guest on holiday/weekend
     newTable = Table(date, time, size, 0)
     newTable.setDiner(new_diner)
-    return render_template("payment.html", client_table=newTable)
+    return render_template("payment.html", client_table=newTable, is_high_traffic=is_high_traffic_day)
 
   hours, minutes = map(int, time.split(':'))
 
@@ -234,18 +239,17 @@ def processing_data(date, time, size, diner):
     ns.addToFile(diner, result, client_table, client['name'])
 
   ###Adding reservation to reservation table for user data / profile 
-  if session['logged_in']: 
-    price = int(size) + 0.00
-    if is_weekend(date) or is_holiday(date): 
+  price = int(size) + 0.00
+  if is_weekend(date) or is_holiday(date): 
       price = price + 5
+  if session['logged_in']: 
     reservation_data = [session['user']['id'], new_diner, date, time, size, price]
     if valid_table:
-      if session['logged_in']:
-        add_reservation(reservation_data)
-        add_points(session['user']['id'], int(price))
+      add_reservation(reservation_data)
+      add_points(session['user']['id'], int(price))
   
   
-  return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info, is_high_traffic_day=is_high_traffic_day)
+  return render_template("tables.html", tables_reserved=result, table_info=client_table, valid_table=valid_table, display_info=display_info, is_high_traffic_day=is_high_traffic_day, points = int(price))
 
 
 

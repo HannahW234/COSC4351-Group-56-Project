@@ -8,7 +8,6 @@
         {% else: %}
             <h2>Success! Thank you for reserving a table </h2>
             {% if session['logged_in'] %}
-                <h2> You earned {{points}} points! </h2>
                 <meta http-equiv = "refresh" content = "3.0; url = {{ url_for('processing_data', date=client_date, time=client_time, size=client_size, diner=reservation_diner)}}" />
             {% else: %}
                 <meta http-equiv = "refresh" content = "3.0; url = {{url_for('unregistered_user_input_info')}}"/>
