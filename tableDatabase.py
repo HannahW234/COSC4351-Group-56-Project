@@ -24,7 +24,6 @@ def create_table_information_database():
     connection = sqlite3.connect('tables.db')
 
     c = connection.cursor()
-    # creating table, dont run again becasue table has already been created
     c.execute("""CREATE TABLE IF NOT EXISTS remainingTables (
           diner TEXT,
           reservation_date DATE,
@@ -33,7 +32,7 @@ def create_table_information_database():
           quantity INTEGER
   )
   """)
-    days_in_advance = 2
+    days_in_advance = 30
     base = datetime.datetime.today()
     date_list = [(base - datetime.timedelta(days=-x)).date() for x in range(days_in_advance)]
     for date in date_list:
@@ -41,7 +40,7 @@ def create_table_information_database():
         if isDateAlreadyInDatabase(date):
             continue
         for diner in DINERS:
-            for time in range(12, 15, 2):
+            for time in range(12, 8, 1):
                 for size in range(2, 9, 2):
                     #date.strftime('%Y-%m-%d')
                     new_table = Table(date, time, size, 2)
