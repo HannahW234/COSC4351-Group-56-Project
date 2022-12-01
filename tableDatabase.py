@@ -167,5 +167,3 @@ def find_quantity(table:Table):
 
 def find_max_capacity(sequence):
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
-
-create_table_information_database()
