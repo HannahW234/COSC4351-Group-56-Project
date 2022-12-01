@@ -40,7 +40,7 @@ def create_table_information_database():
         if isDateAlreadyInDatabase(date):
             continue
         for diner in DINERS:
-            for time in range(12, 8, 1):
+            for time in range(12, 20, 1):
                 for size in range(2, 9, 2):
                     #date.strftime('%Y-%m-%d')
                     new_table = Table(date, time, size, 2)
@@ -168,3 +168,4 @@ def find_quantity(table:Table):
 def find_max_capacity(sequence):
     return sum(list(map(lambda x: functools.reduce(lambda a, b: a * b, x), sequence)))
 
+create_table_information_database()
