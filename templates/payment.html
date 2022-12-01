@@ -9,11 +9,11 @@
     <form action="/enter_payment" method="post">
         Input Credit Info Here:  
         <label>Credit Card Holder Name</label>
-        <input type="text" name="credit_name" placeholder="name" value="haris tud" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
+        <input type="text" name="credit_name" placeholder="name" required pattern="^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"><br>
         <label>Credit Card Number:</label>
-        <input type="text" name="credit_num" value="4569215487956321" required><br>
+        <input type="text" name="credit_num" required><br>
         <label>Security Number:</label>
-        <input type="text" name="security_num" value="317" required><br>
+        <input type="text" name="security_num" required><br>
         <label>Expiration Date</label>
         <input type="month" name="expiration_date" required><br>
         <input type="hidden" name="client_date" value={{ client_table.date }}>
