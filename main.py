@@ -141,8 +141,9 @@ def profile_page():
   credit_info = get_user_credit_data(currentID)
   points = get_points(currentID)
   payment_method = get_payment_method(currentID)
+  favorite_diner = ""
   try: 
-    favorite_diner = calculate_preffered_diner(currentID) ### Will not work if user has not made reservation
+    favorite_diner = calculate_preffered_diner(currentID)
   except: pass 
   previous_reservations, current_reservations = get_user_reservations(currentID) ##IMPLEMENT USER RESERVATIONS 
   name = session['user']['name']
