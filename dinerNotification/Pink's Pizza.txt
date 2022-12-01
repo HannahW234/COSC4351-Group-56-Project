@@ -1,0 +1,2 @@
+Client Name: Sample Name Reservation Date: 2022-12-07 Reservation Time: 14 Tables Combined: [8, 8, 4] 
+

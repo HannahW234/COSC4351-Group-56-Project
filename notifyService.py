@@ -9,6 +9,3 @@ def addToFile(diner, listOfTables, clientTable : Table, clientName):
 
     file.close()
 
-
-
-

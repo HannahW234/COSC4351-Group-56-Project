@@ -216,7 +216,6 @@ def processing_data(date, time, size, diner):
   new_diner = diner ##########needs to go to not user login first I think 
   if " " not in diner.strip(): 
     new_diner = diner_convert[diner.strip()]
-  print(new_diner)
 
   is_high_traffic_day = is_weekend(date) or is_holiday(date)
   if (is_high_traffic_day and not session['logged_in']) and not session['card_on_file'] and not session['stop']: #Unregistered guest on holiday/weekend
